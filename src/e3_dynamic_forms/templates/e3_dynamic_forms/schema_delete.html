@@ -1,0 +1,16 @@
+{% extends base_template %}
+{% load i18n %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{% trans "Delete Form Schema" %}</h2>
+    <div class="alert alert-danger">
+        {% blocktrans with name=schema.name %}Are you sure you want to delete "{{ name }}"? This will also delete all associated responses and attachments.{% endblocktrans %}
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">{% trans "Confirm Delete" %}</button>
+        <a href="{% url 'e3_dynamic_forms:schema_detail' schema.pk %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+    </form>
+</div>
+{% endblock %}

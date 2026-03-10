@@ -1,0 +1,4 @@
+include LICENSE
+include README.md
+recursive-include src/e3_dynamic_forms/static *
+recursive-include src/e3_dynamic_forms/templates *

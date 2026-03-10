@@ -1,0 +1,43 @@
+{% extends base_template %}
+{% load i18n %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{% trans "Response Detail" %}</h2>
+    <p class="text-muted">
+        {% trans "Schema" %}: <a href="{% url 'e3_dynamic_forms:schema_detail' response.schema.pk %}">{{ response.schema.name }}</a>
+        | {% trans "Submitted" %}: {{ response.created_date|date:"Y-m-d H:i" }}
+        | {% trans "By" %}: {{ response.created_by|default:"-" }}
+    </p>
+
+    <div class="card mb-4">
+        <div class="card-header">{% trans "Response Data" %}</div>
+        <div class="card-body">
+            <dl class="row">
+                {% for key, value in response.data.items %}
+                <dt class="col-sm-4">{{ key }}</dt>
+                <dd class="col-sm-8">{{ value }}</dd>
+                {% endfor %}
+            </dl>
+        </div>
+    </div>
+
+    {% if attachments %}
+    <div class="card mb-4">
+        <div class="card-header">{% trans "Attachments" %}</div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                {% for att in attachments %}
+                <li class="list-group-item">
+                    <strong>{{ att.field_name }}</strong>:
+                    <a href="{{ att.file.url }}" target="_blank">{{ att.file.name }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+    <a href="{% url 'e3_dynamic_forms:response_list' response.schema.pk %}" class="btn btn-secondary">{% trans "Back to Responses" %}</a>
+</div>
+{% endblock %}

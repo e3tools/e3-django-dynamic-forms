@@ -1,0 +1,54 @@
+{% extends base_template %}
+{% load i18n %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>{% trans "Form Schemas" %}</h2>
+        <a href="{% url 'e3_dynamic_forms:schema_create' %}" class="btn btn-primary">
+            {% trans "Create Schema" %}
+        </a>
+    </div>
+
+    {% if schemas %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>{% trans "Name" %}</th>
+                    <th>{% trans "Version" %}</th>
+                    <th>{% trans "Pages" %}</th>
+                    <th>{% trans "Active" %}</th>
+                    <th>{% trans "Created" %}</th>
+                    <th>{% trans "Actions" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for schema in schemas %}
+                <tr>
+                    <td><a href="{% url 'e3_dynamic_forms:schema_detail' schema.pk %}">{{ schema.name }}</a></td>
+                    <td>v{{ schema.version }}</td>
+                    <td>{{ schema.page_count }}</td>
+                    <td>
+                        {% if schema.is_active %}
+                            <span class="badge bg-success">{% trans "Active" %}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{% trans "Inactive" %}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ schema.created_date|date:"Y-m-d H:i" }}</td>
+                    <td>
+                        <a href="{% url 'e3_dynamic_forms:schema_edit' schema.pk %}" class="btn btn-sm btn-outline-primary">{% trans "Edit" %}</a>
+                        <a href="{% url 'e3_dynamic_forms:response_list' schema.pk %}" class="btn btn-sm btn-outline-info">{% trans "Responses" %}</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% include "e3_dynamic_forms/_pagination.html" %}
+    {% else %}
+    <p class="text-muted">{% trans "No form schemas yet." %}</p>
+    {% endif %}
+</div>
+{% endblock %}

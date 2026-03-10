@@ -1,0 +1,57 @@
+/* Dynamic Forms Schema Designer */
+
+.df-page-card {
+    border-left: 3px solid #0d6efd;
+}
+
+.df-page-card .card-header {
+    background-color: #f8f9fa;
+}
+
+.df-field-row {
+    background-color: #fff;
+    border-color: #dee2e6 !important;
+}
+
+.df-field-row:hover {
+    background-color: #f8f9fa;
+}
+
+.df-validators {
+    padding-left: 1rem;
+    border-left: 2px solid #e9ecef;
+}
+
+.df-enum-editor {
+    padding-left: 1rem;
+    border-left: 2px solid #d4edda;
+}
+
+.df-conditions {
+    padding-left: 1rem;
+    border-left: 2px solid #cce5ff;
+}
+
+.df-json-preview pre {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+}
+
+.df-add-page-btn {
+    width: 100%;
+}
+
+.geolocation-widget {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.geolocation-display {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.geolocation-icon {
+    font-size: 1rem;
+}

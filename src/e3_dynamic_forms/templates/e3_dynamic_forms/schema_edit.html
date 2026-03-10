@@ -1,0 +1,50 @@
+{% extends base_template %}
+{% load i18n static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{% trans "Edit Form Schema" %}: {{ form.instance.name }}</h2>
+    <form method="post" id="schema-form">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_name" class="form-label">{% trans "Name" %}</label>
+            {{ form.name }}
+            {% if form.name.errors %}<div class="text-danger">{{ form.name.errors }}</div>{% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="id_description" class="form-label">{% trans "Description" %}</label>
+            {{ form.description }}
+            {% if form.description.errors %}<div class="text-danger">{{ form.description.errors }}</div>{% endif %}
+        </div>
+        <div class="mb-3 form-check">
+            {{ form.is_active }}
+            <label for="id_is_active" class="form-check-label">{% trans "Active" %}</label>
+        </div>
+        {{ form.schema }}
+        {% if form.schema.errors %}<div class="text-danger mb-3">{{ form.schema.errors }}</div>{% endif %}
+
+        <div id="schema-designer"></div>
+
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
+            <a href="{% url 'e3_dynamic_forms:schema_detail' form.instance.pk %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+        </div>
+    </form>
+</div>
+
+<link rel="stylesheet" href="{% static 'e3_dynamic_forms/css/schema_form.css' %}">
+<script src="{% static 'e3_dynamic_forms/js/schema_form.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        DynamicFormsDesigner.init('schema-designer', 'id_schema');
+        var existingSchema = document.getElementById('id_schema').value;
+        if (existingSchema) {
+            try {
+                DynamicFormsDesigner.loadFromJSON(JSON.parse(existingSchema));
+            } catch(e) {
+                console.error('Failed to load existing schema:', e);
+            }
+        }
+    });
+</script>
+{% endblock %}
