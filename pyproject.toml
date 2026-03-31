@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "e3-django-dynamic-forms"
-version = "0.1.4"
+version = "0.1.5"
 description = "A dynamic JSON-based form engine for Django"
 readme = "README.md"
 license = "MIT"

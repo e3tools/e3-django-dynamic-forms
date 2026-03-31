@@ -1,6 +1,8 @@
 from rest_framework import viewsets, permissions
+from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
 
+from ..conf import get_attachment_model
 from ..models import FormSchema, FormResponse
 from .serializers import (
     FormSchemaSerializer,
@@ -29,6 +31,7 @@ class FormSchemaViewSet(viewsets.ModelViewSet):
 
 class FormResponseViewSet(viewsets.ModelViewSet):
     queryset = FormResponse.objects.select_related('schema').all()
+    parser_classes = [MultiPartParser, JSONParser]
 
     def get_permissions(self):
         if self.action == 'create':
@@ -46,4 +49,13 @@ class FormResponseViewSet(viewsets.ModelViewSet):
         return qs
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
+        response = serializer.save(created_by=self.request.user)
+
+        # Create Attachment objects for any uploaded files.
+        Attachment = get_attachment_model()
+        for field_name, file_obj in self.request.FILES.items():
+            Attachment.objects.create(
+                response=response,
+                field_name=field_name,
+                file=file_obj,
+            )

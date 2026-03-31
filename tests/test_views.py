@@ -61,7 +61,7 @@ class TestSchemaViews:
 
     def test_create_schema(self, db, staff_client):
         schema_json = json.dumps({
-            'pages': [{'title': 'P1', 'fields': [{'name': 'q1', 'type': 'string'}]}]
+            'pages': [{'title': 'P1', 'fields': [{'name': 'q1', 'type': 'string', 'label': 'Q1', 'required': False, 'order': 0}]}]
         })
         resp = staff_client.post('/dynamic-forms/schemas/create/', {
             'name': 'New Schema',

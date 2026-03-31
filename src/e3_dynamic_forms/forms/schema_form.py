@@ -4,6 +4,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from ..models import FormSchema
+from ..utils.schema_validator import validate_schema
 
 
 class FormSchemaForm(forms.ModelForm):
@@ -29,16 +30,8 @@ class FormSchemaForm(forms.ModelForm):
         except (json.JSONDecodeError, TypeError):
             raise forms.ValidationError(_('Invalid JSON format.'))
 
-        if not isinstance(data, dict):
-            raise forms.ValidationError(_('Schema must be a JSON object.'))
-        if 'pages' not in data:
-            raise forms.ValidationError(_('Schema must contain a "pages" key.'))
-        if not isinstance(data['pages'], list):
-            raise forms.ValidationError(_('"pages" must be a list.'))
-        for i, page in enumerate(data['pages']):
-            if not isinstance(page, dict):
-                raise forms.ValidationError(_(f'Page {i + 1} must be an object.'))
-            if 'fields' not in page:
-                raise forms.ValidationError(_(f'Page {i + 1} must contain "fields".'))
+        errors = validate_schema(data)
+        if errors:
+            raise forms.ValidationError([_(e) for e in errors])
 
         return data
