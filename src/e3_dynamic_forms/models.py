@@ -25,7 +25,7 @@ class AbstractFormSchema(TimeStampedModel):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='created_form_schemas',
+        related_name='%(class)s_created_schemas',
         verbose_name=_('created by'),
     )
 

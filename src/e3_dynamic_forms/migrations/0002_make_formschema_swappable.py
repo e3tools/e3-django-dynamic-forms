@@ -6,6 +6,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('e3_dynamic_forms', '0001_initial'),
     ]
 
@@ -18,6 +19,18 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'form schemas',
                 'swappable': 'DYNAMIC_FORMS_SCHEMA_MODEL',
             },
+        ),
+        migrations.AlterField(
+            model_name='formschema',
+            name='created_by',
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name='%(class)s_created_schemas',
+                to=settings.AUTH_USER_MODEL,
+                verbose_name='created by',
+            ),
         ),
         migrations.AlterField(
             model_name='formresponse',

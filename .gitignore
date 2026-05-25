@@ -1,4 +1,27 @@
-.idea
-dist
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
 
-*.pyc
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+.eggs/
+build/
+dist/
+
+# Django
+*.sqlite3
+e3_dynamic_forms/attachments/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS
+.DS_Store
+Thumbs.db
