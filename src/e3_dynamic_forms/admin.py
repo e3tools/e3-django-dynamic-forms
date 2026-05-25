@@ -1,15 +1,20 @@
 from django.contrib import admin
 
-from .conf import get_attachment_model
-from .models import FormSchema, FormResponse
+from .conf import get_attachment_model, get_form_schema_model
+from .models import FormResponse
 
 
-@admin.register(FormSchema)
-class FormSchemaAdmin(admin.ModelAdmin):
-    list_display = ('name', 'version', 'is_active', 'created_by', 'created_date')
-    list_filter = ('is_active', 'created_date')
-    search_fields = ('name', 'description')
-    readonly_fields = ('id', 'created_date', 'updated_date')
+FormSchema = get_form_schema_model()
+
+try:
+    @admin.register(FormSchema)
+    class FormSchemaAdmin(admin.ModelAdmin):
+        list_display = ('name', 'version', 'is_active', 'created_by', 'created_date')
+        list_filter = ('is_active', 'created_date')
+        search_fields = ('name', 'description')
+        readonly_fields = ('id', 'created_date', 'updated_date')
+except admin.sites.AlreadyRegistered:
+    pass
 
 
 @admin.register(FormResponse)

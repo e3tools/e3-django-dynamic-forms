@@ -19,7 +19,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional
 
 from ..conf import get_attachment_model
-from ..models import FormResponse, FormSchema
+from ..models import FormResponse
 from ..utils.json_form_parser import build_dynamic_form_class
 from ..utils.response_validator import validate_response_data
 from .state_backend import StateBackend
@@ -53,7 +53,7 @@ class FormResponseProcessor:
     processor itself is stateless with respect to HTTP.
     """
 
-    def __init__(self, schema: FormSchema, state_backend: StateBackend):
+    def __init__(self, schema, state_backend: StateBackend):
         self.schema = schema
         self.state = state_backend
 

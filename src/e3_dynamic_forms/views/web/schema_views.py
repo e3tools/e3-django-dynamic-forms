@@ -1,9 +1,8 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
 
-from ...conf import app_settings
-from ...forms.schema_form import FormSchemaForm
-from ...models import FormSchema
+from ...conf import app_settings, get_form_schema_model
+from ...forms.schema_form import get_form_schema_form_class
 
 
 def _get_mixin():
@@ -22,7 +21,7 @@ def get_schema_list_view():
     Mixin = _get_mixin()
 
     class SchemaListView(Mixin, _BaseContextMixin, ListView):
-        model = FormSchema
+        model = get_form_schema_model()
         template_name = 'e3_dynamic_forms/schema_list.html'
         context_object_name = 'schemas'
         paginate_by = 20
@@ -34,8 +33,8 @@ def get_schema_create_view():
     Mixin = _get_mixin()
 
     class SchemaCreateView(Mixin, _BaseContextMixin, CreateView):
-        model = FormSchema
-        form_class = FormSchemaForm
+        model = get_form_schema_model()
+        form_class = get_form_schema_form_class()
         template_name = 'e3_dynamic_forms/schema_create.html'
         success_url = reverse_lazy('e3_dynamic_forms:schema_list')
 
@@ -50,8 +49,8 @@ def get_schema_edit_view():
     Mixin = _get_mixin()
 
     class SchemaEditView(Mixin, _BaseContextMixin, UpdateView):
-        model = FormSchema
-        form_class = FormSchemaForm
+        model = get_form_schema_model()
+        form_class = get_form_schema_form_class()
         template_name = 'e3_dynamic_forms/schema_edit.html'
         success_url = reverse_lazy('e3_dynamic_forms:schema_list')
 
@@ -66,7 +65,7 @@ def get_schema_detail_view():
     Mixin = _get_mixin()
 
     class SchemaDetailView(Mixin, _BaseContextMixin, DetailView):
-        model = FormSchema
+        model = get_form_schema_model()
         template_name = 'e3_dynamic_forms/schema_detail.html'
         context_object_name = 'schema'
 
@@ -82,7 +81,7 @@ def get_schema_delete_view():
     Mixin = _get_mixin()
 
     class SchemaDeleteView(Mixin, _BaseContextMixin, DeleteView):
-        model = FormSchema
+        model = get_form_schema_model()
         template_name = 'e3_dynamic_forms/schema_delete.html'
         success_url = reverse_lazy('e3_dynamic_forms:schema_list')
         context_object_name = 'schema'

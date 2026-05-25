@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from ..conf import get_attachment_model
-from ..models import FormSchema, FormResponse
+from ..conf import get_attachment_model, get_form_schema_model
+from ..models import FormResponse
 from ..utils.response_validator import validate_response_data
 from ..utils.schema_validator import validate_schema
 
@@ -10,13 +10,16 @@ class FormSchemaSerializer(serializers.ModelSerializer):
     page_count = serializers.ReadOnlyField()
 
     class Meta:
-        model = FormSchema
         fields = [
             'id', 'name', 'description', 'schema', 'version',
             'is_active', 'created_by', 'created_date', 'updated_date',
             'page_count',
         ]
         read_only_fields = ['id', 'version', 'created_date', 'updated_date', 'created_by']
+
+    def __init__(self, *args, **kwargs):
+        self.Meta.model = get_form_schema_model()
+        super().__init__(*args, **kwargs)
 
     def validate_schema(self, value):
         errors = validate_schema(value)
@@ -29,8 +32,11 @@ class FormSchemaListSerializer(serializers.ModelSerializer):
     page_count = serializers.ReadOnlyField()
 
     class Meta:
-        model = FormSchema
         fields = ['id', 'name', 'version', 'is_active', 'page_count']
+
+    def __init__(self, *args, **kwargs):
+        self.Meta.model = get_form_schema_model()
+        super().__init__(*args, **kwargs)
 
 
 class AttachmentSerializer(serializers.ModelSerializer):

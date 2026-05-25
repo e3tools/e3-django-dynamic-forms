@@ -3,8 +3,8 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, DetailView, TemplateView
 
-from ...conf import app_settings, get_attachment_model
-from ...models import FormSchema, FormResponse
+from ...conf import app_settings, get_attachment_model, get_form_schema_model
+from ...models import FormResponse
 from ...services import FormResponseProcessor, SessionStateBackend
 
 
@@ -35,7 +35,7 @@ def get_response_list_view():
             ctx = super().get_context_data(**kwargs)
             schema_pk = self.kwargs.get('schema_pk')
             if schema_pk:
-                ctx['schema'] = get_object_or_404(FormSchema, pk=schema_pk)
+                ctx['schema'] = get_object_or_404(get_form_schema_model(), pk=schema_pk)
             return ctx
 
     return ResponseListView
@@ -65,7 +65,7 @@ def get_response_create_view():
         template_name = 'e3_dynamic_forms/response_create.html'
 
         def dispatch(self, request, *args, **kwargs):
-            self.schema_obj = get_object_or_404(FormSchema, pk=kwargs['pk'], is_active=True)
+            self.schema_obj = get_object_or_404(get_form_schema_model(), pk=kwargs['pk'], is_active=True)
             self.processor = FormResponseProcessor(
                 self.schema_obj, SessionStateBackend(request.session),
             )

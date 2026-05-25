@@ -13,7 +13,7 @@ class TimeStampedModel(models.Model):
         abstract = True
 
 
-class FormSchema(TimeStampedModel):
+class AbstractFormSchema(TimeStampedModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(_('name'), max_length=255)
     description = models.TextField(_('description'), blank=True, default='')
@@ -30,9 +30,7 @@ class FormSchema(TimeStampedModel):
     )
 
     class Meta:
-        verbose_name = _('form schema')
-        verbose_name_plural = _('form schemas')
-        ordering = ['-created_date']
+        abstract = True
 
     def __str__(self):
         return f"{self.name} (v{self.version})"
@@ -43,10 +41,18 @@ class FormSchema(TimeStampedModel):
         return len(pages) if pages else 1
 
 
+class FormSchema(AbstractFormSchema):
+    class Meta(AbstractFormSchema.Meta):
+        verbose_name = _('form schema')
+        verbose_name_plural = _('form schemas')
+        ordering = ['-created_date']
+        swappable = 'DYNAMIC_FORMS_SCHEMA_MODEL'
+
+
 class FormResponse(TimeStampedModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     schema = models.ForeignKey(
-        FormSchema,
+        getattr(settings, 'DYNAMIC_FORMS_SCHEMA_MODEL', 'e3_dynamic_forms.FormSchema'),
         on_delete=models.CASCADE,
         related_name='responses',
         verbose_name=_('schema'),

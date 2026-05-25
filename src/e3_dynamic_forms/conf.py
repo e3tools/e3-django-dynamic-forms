@@ -52,6 +52,12 @@ class DynamicFormsSettings:
         self._user_settings = None
 
 
+def get_form_schema_model():
+    from django.apps import apps
+    model_label = getattr(settings, 'DYNAMIC_FORMS_SCHEMA_MODEL', 'e3_dynamic_forms.FormSchema')
+    return apps.get_model(model_label)
+
+
 def get_attachment_model():
     from django.apps import apps
     model_label = getattr(settings, 'DYNAMIC_FORMS_ATTACHMENT_MODEL', 'e3_dynamic_forms.Attachment')

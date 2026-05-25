@@ -65,9 +65,38 @@ DYNAMIC_FORMS = {
 }
 ```
 
-### Swappable Attachment Model
+### Swappable Models
 
-Like `AUTH_USER_MODEL`, you can swap the attachment model:
+Like Django's `AUTH_USER_MODEL`, you can swap the built-in models with your own custom implementations.
+
+#### Form Schema Model
+
+```python
+# settings.py
+DYNAMIC_FORMS_SCHEMA_MODEL = 'myapp.MyFormSchema'
+```
+
+```python
+# myapp/models.py
+from django.db import models
+from e3_dynamic_forms.models import AbstractFormSchema
+
+class MyFormSchema(AbstractFormSchema):
+    department = models.CharField(max_length=255)
+
+    class Meta(AbstractFormSchema.Meta):
+        swappable = 'DYNAMIC_FORMS_SCHEMA_MODEL'
+```
+
+To reference the active schema model at runtime (instead of importing `FormSchema` directly):
+
+```python
+from e3_dynamic_forms.conf import get_form_schema_model
+
+FormSchema = get_form_schema_model()
+```
+
+#### Attachment Model
 
 ```python
 # settings.py
@@ -76,6 +105,7 @@ DYNAMIC_FORMS_ATTACHMENT_MODEL = 'myapp.MyAttachment'
 
 ```python
 # myapp/models.py
+from django.db import models
 from e3_dynamic_forms.models import AbstractAttachment
 
 class MyAttachment(AbstractAttachment):
@@ -84,6 +114,16 @@ class MyAttachment(AbstractAttachment):
     class Meta(AbstractAttachment.Meta):
         swappable = 'DYNAMIC_FORMS_ATTACHMENT_MODEL'
 ```
+
+To reference the active attachment model at runtime:
+
+```python
+from e3_dynamic_forms.conf import get_attachment_model
+
+Attachment = get_attachment_model()
+```
+
+> **Note:** Like `AUTH_USER_MODEL`, swappable model settings should be set **before** running `migrate` for the first time. Changing them after tables have been created requires manual migration work.
 
 ## JSON Schema Format
 
@@ -272,7 +312,7 @@ The package provides a reusable `FormResponseProcessor` service that handles the
 ```python
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import TemplateView
-from e3_dynamic_forms.models import FormSchema
+from e3_dynamic_forms.conf import get_form_schema_model
 from e3_dynamic_forms.services import FormResponseProcessor, SessionStateBackend
 
 
@@ -280,6 +320,7 @@ class MySurveyView(LoginRequiredMixin, TemplateView):
     template_name = 'my_app/survey.html'
 
     def dispatch(self, request, *args, **kwargs):
+        FormSchema = get_form_schema_model()
         self.schema = get_object_or_404(FormSchema, pk=kwargs['pk'])
         self.processor = FormResponseProcessor(
             self.schema, SessionStateBackend(request.session),

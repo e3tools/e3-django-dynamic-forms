@@ -1,7 +1,9 @@
 import pytest
 from django.contrib.auth import get_user_model
+from django.test import override_settings
 
-from e3_dynamic_forms.models import FormSchema, FormResponse, Attachment
+from e3_dynamic_forms.conf import get_form_schema_model
+from e3_dynamic_forms.models import AbstractFormSchema, FormSchema, FormResponse, Attachment
 
 User = get_user_model()
 
@@ -79,3 +81,59 @@ class TestAttachment:
         att = Attachment(response=response, field_name='my_file')
         att.file.name = 'test.pdf'
         assert 'my_file' in str(att)
+
+
+class TestSwappableFormSchema:
+    def test_abstract_form_schema_is_abstract(self):
+        assert AbstractFormSchema._meta.abstract is True
+
+    def test_form_schema_swappable_meta(self):
+        assert FormSchema._meta.swappable == 'DYNAMIC_FORMS_SCHEMA_MODEL'
+
+    def test_form_schema_not_swapped_by_default(self):
+        assert FormSchema._meta.swapped is None
+
+    def test_get_form_schema_model_returns_default(self):
+        assert get_form_schema_model() is FormSchema
+
+    @override_settings(DYNAMIC_FORMS_SCHEMA_MODEL='test_app.CustomFormSchema')
+    def test_get_form_schema_model_returns_custom(self):
+        from tests.test_app.models import CustomFormSchema
+        assert get_form_schema_model() is CustomFormSchema
+
+    def test_custom_schema_inherits_str(self, db, user):
+        from tests.test_app.models import CustomFormSchema
+        s = CustomFormSchema.objects.create(
+            name='Custom', schema={'pages': [{'title': 'P1', 'fields': []}]},
+            department='Engineering', created_by=user,
+        )
+        assert str(s) == 'Custom (v1)'
+
+    def test_custom_schema_inherits_page_count(self, db, user):
+        from tests.test_app.models import CustomFormSchema
+        s = CustomFormSchema.objects.create(
+            name='Custom',
+            schema={
+                'pages': [
+                    {'title': 'P1', 'fields': []},
+                    {'title': 'P2', 'fields': []},
+                ]
+            },
+            department='Engineering', created_by=user,
+        )
+        assert s.page_count == 2
+
+    def test_custom_schema_has_extra_field(self, db, user):
+        from tests.test_app.models import CustomFormSchema
+        s = CustomFormSchema.objects.create(
+            name='Custom', schema={}, department='Finance', created_by=user,
+        )
+        assert s.department == 'Finance'
+
+    def test_custom_schema_has_timestamps(self, db, user):
+        from tests.test_app.models import CustomFormSchema
+        s = CustomFormSchema.objects.create(
+            name='Custom', schema={}, created_by=user,
+        )
+        assert s.created_date is not None
+        assert s.updated_date is not None

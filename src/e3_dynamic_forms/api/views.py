@@ -2,8 +2,8 @@ from rest_framework import viewsets, permissions
 from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
 
-from ..conf import get_attachment_model
-from ..models import FormSchema, FormResponse
+from ..conf import get_attachment_model, get_form_schema_model
+from ..models import FormResponse
 from .serializers import (
     FormSchemaSerializer,
     FormSchemaListSerializer,
@@ -17,8 +17,10 @@ class IsStaffPermission(permissions.BasePermission):
 
 
 class FormSchemaViewSet(viewsets.ModelViewSet):
-    queryset = FormSchema.objects.all()
     permission_classes = [IsStaffPermission]
+
+    def get_queryset(self):
+        return get_form_schema_model().objects.all()
 
     def get_serializer_class(self):
         if self.action == 'list':
