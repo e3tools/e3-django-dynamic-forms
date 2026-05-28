@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.1 - 2026-05-28
+
+### Fixed
+- Fixed `AttributeError: 'SettingsReference' object has no attribute '_meta'` caused by Django's swappable mechanism returning `SettingsReference` objects instead of plain strings for ForeignKey targets.
+- Swappable model settings (`DYNAMIC_FORMS_SCHEMA_MODEL`, `DYNAMIC_FORMS_RESPONSE_MODEL`, `DYNAMIC_FORMS_ATTACHMENT_MODEL`) now have defaults set at app load time, matching the `settings.AUTH_USER_MODEL` pattern.
+- Migrations now declare proper `swappable_dependency` for custom swappable settings.
+
 ## 0.3.0 - 2026-05-28
 
 ### Added

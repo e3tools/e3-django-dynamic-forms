@@ -7,6 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        migrations.swappable_dependency(settings.DYNAMIC_FORMS_SCHEMA_MODEL),
         ('e3_dynamic_forms', '0001_initial'),
     ]
 
@@ -38,11 +39,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name='responses',
-                to=getattr(
-                    settings,
-                    'DYNAMIC_FORMS_SCHEMA_MODEL',
-                    'e3_dynamic_forms.FormSchema',
-                ),
+                to=settings.DYNAMIC_FORMS_SCHEMA_MODEL,
                 verbose_name='schema',
             ),
         ),

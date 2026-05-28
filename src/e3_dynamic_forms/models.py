@@ -52,7 +52,7 @@ class FormSchema(AbstractFormSchema):
 class AbstractFormResponse(TimeStampedModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     schema = models.ForeignKey(
-        getattr(settings, 'DYNAMIC_FORMS_SCHEMA_MODEL', 'e3_dynamic_forms.FormSchema'),
+        settings.DYNAMIC_FORMS_SCHEMA_MODEL,
         on_delete=models.CASCADE,
         related_name='%(class)s_responses',
         verbose_name=_('schema'),
@@ -85,7 +85,7 @@ class FormResponse(AbstractFormResponse):
 class AbstractAttachment(TimeStampedModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     response = models.ForeignKey(
-        getattr(settings, 'DYNAMIC_FORMS_RESPONSE_MODEL', 'e3_dynamic_forms.FormResponse'),
+        settings.DYNAMIC_FORMS_RESPONSE_MODEL,
         on_delete=models.CASCADE,
         related_name='%(class)s_attachments',
         verbose_name=_('response'),
