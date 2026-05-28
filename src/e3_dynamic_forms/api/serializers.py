@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
-from ..conf import get_attachment_model, get_form_schema_model
-from ..models import FormResponse
+from ..conf import get_attachment_model, get_form_response_model, get_form_schema_model
 from ..utils.response_validator import validate_response_data
 from ..utils.schema_validator import validate_schema
 
@@ -55,12 +54,15 @@ class FormResponseSerializer(serializers.ModelSerializer):
     attachments = serializers.SerializerMethodField()
 
     class Meta:
-        model = FormResponse
         fields = [
             'id', 'schema', 'data', 'created_by',
             'created_date', 'updated_date', 'attachments',
         ]
         read_only_fields = ['id', 'created_date', 'updated_date', 'created_by']
+
+    def __init__(self, *args, **kwargs):
+        self.Meta.model = get_form_response_model()
+        super().__init__(*args, **kwargs)
 
     def validate_data(self, value):
         # Multipart uploads send ``data`` as a JSON string — parse it.

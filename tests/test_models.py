@@ -2,8 +2,8 @@ import pytest
 from django.contrib.auth import get_user_model
 from django.test import override_settings
 
-from e3_dynamic_forms.conf import get_form_schema_model
-from e3_dynamic_forms.models import AbstractFormSchema, FormSchema, FormResponse, Attachment
+from e3_dynamic_forms.conf import get_form_response_model, get_form_schema_model
+from e3_dynamic_forms.models import AbstractFormSchema, AbstractFormResponse, FormSchema, FormResponse, Attachment
 
 User = get_user_model()
 
@@ -73,7 +73,7 @@ class TestFormResponse:
 
     def test_fk_relation(self, response, schema):
         assert response.schema == schema
-        assert schema.responses.count() == 1
+        assert schema.formresponse_responses.count() == 1
 
 
 class TestAttachment:
@@ -81,6 +81,20 @@ class TestAttachment:
         att = Attachment(response=response, field_name='my_file')
         att.file.name = 'test.pdf'
         assert 'my_file' in str(att)
+
+
+class TestSwappableFormResponse:
+    def test_abstract_form_response_is_abstract(self):
+        assert AbstractFormResponse._meta.abstract is True
+
+    def test_form_response_swappable_meta(self):
+        assert FormResponse._meta.swappable == 'DYNAMIC_FORMS_RESPONSE_MODEL'
+
+    def test_form_response_not_swapped_by_default(self):
+        assert FormResponse._meta.swapped is None
+
+    def test_get_form_response_model_returns_default(self):
+        assert get_form_response_model() is FormResponse
 
 
 class TestSwappableFormSchema:

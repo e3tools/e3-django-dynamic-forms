@@ -1,7 +1,7 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
 
-from ...conf import app_settings, get_form_schema_model
+from ...conf import app_settings, get_form_response_model, get_form_schema_model
 from ...forms.schema_form import get_form_schema_form_class
 
 
@@ -71,7 +71,10 @@ def get_schema_detail_view():
 
         def get_context_data(self, **kwargs):
             ctx = super().get_context_data(**kwargs)
-            ctx['recent_responses'] = self.object.responses.order_by('-created_date')[:10]
+            FormResponse = get_form_response_model()
+            ctx['recent_responses'] = FormResponse.objects.filter(
+                schema=self.object,
+            ).order_by('-created_date')[:10]
             return ctx
 
     return SchemaDetailView

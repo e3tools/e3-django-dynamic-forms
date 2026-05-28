@@ -96,6 +96,33 @@ from e3_dynamic_forms.conf import get_form_schema_model
 FormSchema = get_form_schema_model()
 ```
 
+#### Form Response Model
+
+```python
+# settings.py
+DYNAMIC_FORMS_RESPONSE_MODEL = 'myapp.MyFormResponse'
+```
+
+```python
+# myapp/models.py
+from django.db import models
+from e3_dynamic_forms.models import AbstractFormResponse
+
+class MyFormResponse(AbstractFormResponse):
+    reviewer = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.SET_NULL)
+
+    class Meta(AbstractFormResponse.Meta):
+        swappable = 'DYNAMIC_FORMS_RESPONSE_MODEL'
+```
+
+To reference the active response model at runtime:
+
+```python
+from e3_dynamic_forms.conf import get_form_response_model
+
+FormResponse = get_form_response_model()
+```
+
 #### Attachment Model
 
 ```python

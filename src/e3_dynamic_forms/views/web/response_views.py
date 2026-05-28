@@ -3,8 +3,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, DetailView, TemplateView
 
-from ...conf import app_settings, get_attachment_model, get_form_schema_model
-from ...models import FormResponse
+from ...conf import app_settings, get_attachment_model, get_form_response_model, get_form_schema_model
 from ...services import FormResponseProcessor, SessionStateBackend
 
 
@@ -19,7 +18,7 @@ def get_response_list_view():
     Mixin = app_settings.get_mixin('STAFF_PERMISSION_MIXIN')
 
     class ResponseListView(Mixin, _BaseContextMixin, ListView):
-        model = FormResponse
+        model = get_form_response_model()
         template_name = 'e3_dynamic_forms/response_list.html'
         context_object_name = 'responses'
         paginate_by = 20
@@ -45,7 +44,7 @@ def get_response_detail_view():
     Mixin = app_settings.get_mixin('STAFF_PERMISSION_MIXIN')
 
     class ResponseDetailView(Mixin, _BaseContextMixin, DetailView):
-        model = FormResponse
+        model = get_form_response_model()
         template_name = 'e3_dynamic_forms/response_detail.html'
         context_object_name = 'response'
 

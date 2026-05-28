@@ -2,8 +2,7 @@ from rest_framework import viewsets, permissions
 from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
 
-from ..conf import get_attachment_model, get_form_schema_model
-from ..models import FormResponse
+from ..conf import get_attachment_model, get_form_response_model, get_form_schema_model
 from .serializers import (
     FormSchemaSerializer,
     FormSchemaListSerializer,
@@ -32,7 +31,6 @@ class FormSchemaViewSet(viewsets.ModelViewSet):
 
 
 class FormResponseViewSet(viewsets.ModelViewSet):
-    queryset = FormResponse.objects.select_related('schema').all()
     parser_classes = [MultiPartParser, JSONParser]
 
     def get_permissions(self):
@@ -44,7 +42,7 @@ class FormResponseViewSet(viewsets.ModelViewSet):
         return FormResponseSerializer
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        qs = get_form_response_model().objects.select_related('schema').all()
         schema_id = self.request.query_params.get('schema')
         if schema_id:
             qs = qs.filter(schema_id=schema_id)

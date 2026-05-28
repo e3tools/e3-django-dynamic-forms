@@ -1,7 +1,6 @@
 from django.contrib import admin
 
-from .conf import get_attachment_model, get_form_schema_model
-from .models import FormResponse
+from .conf import get_attachment_model, get_form_response_model, get_form_schema_model
 
 
 FormSchema = get_form_schema_model()
@@ -17,12 +16,17 @@ except admin.sites.AlreadyRegistered:
     pass
 
 
-@admin.register(FormResponse)
-class FormResponseAdmin(admin.ModelAdmin):
-    list_display = ('id', 'schema', 'created_by', 'created_date')
-    list_filter = ('schema', 'created_date')
-    search_fields = ('schema__name',)
-    readonly_fields = ('id', 'created_date', 'updated_date')
+FormResponse = get_form_response_model()
+
+try:
+    @admin.register(FormResponse)
+    class FormResponseAdmin(admin.ModelAdmin):
+        list_display = ('id', 'schema', 'created_by', 'created_date')
+        list_filter = ('schema', 'created_date')
+        search_fields = ('schema__name',)
+        readonly_fields = ('id', 'created_date', 'updated_date')
+except admin.sites.AlreadyRegistered:
+    pass
 
 
 Attachment = get_attachment_model()

@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.3.0 - 2026-05-28
+
+### Added
+- Swappable form response model via `DYNAMIC_FORMS_RESPONSE_MODEL` setting.
+- `AbstractFormResponse` base class for custom response models.
+- `get_form_response_model()` helper in `e3_dynamic_forms.conf`.
+
+### Changed
+- `FormResponse.schema` related_name changed from `responses` to `%(class)s_responses` to prevent clashes when subclassing `AbstractFormResponse`.
+- `FormResponse.created_by` related_name changed from `form_responses` to `%(class)s_form_responses`.
+- `AbstractAttachment.response` FK now points to the swappable `DYNAMIC_FORMS_RESPONSE_MODEL` setting instead of hardcoded `FormResponse`.
+
+### Migration notes
+- Run `python manage.py migrate` to apply migration `0003_make_formresponse_swappable`.
+- If you use `schema.responses` in your code, update it to `schema.formresponse_responses`.
+- If you use `user.form_responses` in your code, update it to `user.formresponse_form_responses`.
+
 ## 0.2.0 - 2026-05-25
 
 ### Added

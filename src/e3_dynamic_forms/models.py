@@ -49,12 +49,12 @@ class FormSchema(AbstractFormSchema):
         swappable = 'DYNAMIC_FORMS_SCHEMA_MODEL'
 
 
-class FormResponse(TimeStampedModel):
+class AbstractFormResponse(TimeStampedModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     schema = models.ForeignKey(
         getattr(settings, 'DYNAMIC_FORMS_SCHEMA_MODEL', 'e3_dynamic_forms.FormSchema'),
         on_delete=models.CASCADE,
-        related_name='responses',
+        related_name='%(class)s_responses',
         verbose_name=_('schema'),
     )
     data = models.JSONField(_('data'), default=dict)
@@ -63,23 +63,29 @@ class FormResponse(TimeStampedModel):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='form_responses',
+        related_name='%(class)s_form_responses',
         verbose_name=_('created by'),
     )
 
     class Meta:
-        verbose_name = _('form response')
-        verbose_name_plural = _('form responses')
-        ordering = ['-created_date']
+        abstract = True
 
     def __str__(self):
         return f"Response to {self.schema.name} ({self.id})"
 
 
+class FormResponse(AbstractFormResponse):
+    class Meta(AbstractFormResponse.Meta):
+        verbose_name = _('form response')
+        verbose_name_plural = _('form responses')
+        ordering = ['-created_date']
+        swappable = 'DYNAMIC_FORMS_RESPONSE_MODEL'
+
+
 class AbstractAttachment(TimeStampedModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     response = models.ForeignKey(
-        'e3_dynamic_forms.FormResponse',
+        getattr(settings, 'DYNAMIC_FORMS_RESPONSE_MODEL', 'e3_dynamic_forms.FormResponse'),
         on_delete=models.CASCADE,
         related_name='%(class)s_attachments',
         verbose_name=_('response'),

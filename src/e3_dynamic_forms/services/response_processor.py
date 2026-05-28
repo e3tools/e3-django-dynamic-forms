@@ -18,8 +18,7 @@ Usage::
 from dataclasses import dataclass, field
 from typing import List, Optional
 
-from ..conf import get_attachment_model
-from ..models import FormResponse
+from ..conf import get_attachment_model, get_form_response_model
 from ..utils.json_form_parser import build_dynamic_form_class
 from ..utils.response_validator import validate_response_data
 from .state_backend import StateBackend
@@ -38,8 +37,8 @@ class PageResult:
     is_complete: bool = False
     """``True`` when the final page was submitted successfully."""
 
-    response: Optional[FormResponse] = None
-    """The newly created ``FormResponse``. Set only when ``is_complete`` is ``True``."""
+    response: Optional[object] = None
+    """The newly created FormResponse instance. Set only when ``is_complete`` is ``True``."""
 
     validation_errors: List[str] = field(default_factory=list)
     """Accumulated-data validation errors (non-empty only on final-page failure)."""
@@ -159,6 +158,7 @@ class FormResponseProcessor:
                 validation_errors=validation_errors,
             )
 
+        FormResponse = get_form_response_model()
         response = FormResponse.objects.create(
             schema=self.schema,
             data=accumulated_data,
